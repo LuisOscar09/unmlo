@@ -34,7 +34,7 @@
             color: #fff;
             font-weight: 700;
         }
-        p, small, span {
+        p {
             color: #eaeaea;
             font-size: 1.1rem;
         }
@@ -63,21 +63,32 @@
 </head>
 <body>
     <div class="container" id="box">
-        <img id="server_pic" src="https://media.discordapp.net/attachments/851389970840944640/851390664788934656/755243061088616458.gif?ex=66cd9ad8&is=66cc4958&hm=10cf4e10b67b1963f58fe75238715fe236e2f5ac90aba61a23f8192a61442e84&=&width=360&height=360" alt="Server Picture">
+        <img id="server_pic" src="https://media.discordapp.net/attachments/851389970840944640/851390664788934656/755243061088616458.gif" alt="Server Picture">
         <h2 id="user-message"></h2>
         <p>تم توثيق حسابك بنجاح .. يمكنك إغلاق الصفحة هذه</p>
     </div>
     <script>
         window.onload = () => {
+            // عرض رسالة النجاح بعد المصادقة
             document.getElementById("user-message").innerHTML = `تم توثيقك بنجاح`;
-            const code = location.href.substring(location.href.indexOf("code") + 5, location.href.length);
-            if (location.href.indexOf("code") > -1) {
-                const req = new XMLHttpRequest();
-                req.open("POST", ""); // ضع رابط التوجيه هنا
-                req.send(code);
-                req.onload = () => {
-                    // قم بإضافة أي كود تود تنفيذه بعد نجاح الطلب هنا
-                };
+
+            // استرداد الكود من الـURL
+            const code = new URLSearchParams(window.location.search).get("code");
+
+            // إرسال الكود إلى السيرفر لمعالجته
+            if (code) {
+                fetch('https://your-api-endpoint/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ code: code })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Success:", data);
+                })
+                .catch(err => console.error("Error:", err));
             }
         };
     </script>
